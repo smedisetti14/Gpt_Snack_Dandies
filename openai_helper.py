@@ -26,6 +26,3 @@ except openai.error.AuthenticationError as e:
     print("OpenAI unknown authentication error")
     print(e.json_body)
     print(e.headers)
-
-
-
