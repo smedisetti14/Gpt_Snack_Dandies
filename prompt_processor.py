@@ -1,35 +1,36 @@
 class PromptProcessor():
     def create_prompt(description):
-        placeholder_string =  '''Hello, I'm suffering from the following symptoms {symptoms} 
-        from the last {days} days,
-        my diet is {diet_choice}, 
-        and I {choice} have smoking/drinking habits,
-        I've been taking the {medicine} medicines regularly, please suggest a
-        doctor for me, please provide a one word answer'''
-
         # Extract the required information from the description
+        age = description.get('age')
+        alcohol_consumption = description.get('alcohol_consumption')
+        dietary_preferences = description.get('dietary_preferences')
+        health_history = description.get('health_history')
+        medications = description.get('medications')
         symptoms = description.get('symptoms')
-        diet_choice = description.get('diet_choice')
-        choice = description.get('choice')
+        symptoms_duration = description.get('symptoms_duration')
+        tobacco_use = description.get('tobacco_use')
         
-         #if choice is false, replace the value with do otherwise replace it with don't
-        choice = "don't" if choice == 'false' else "do"
+         #if tobacco_use is false, replace the value with do otherwise replace it with don't
+        tobacco_use = "don't" if tobacco_use == 'false' else "do"
 
-        medicine = description.get('medicine')
-        days = description.get('days')
+        #if alcohol_consumption is false, replace the value with do otherwise replace it with don't
+        alcohol_consumption = "don't" if alcohol_consumption == 'false' else "do"
+
+        placeholder_string = '''Hello, I'm suffering from the following symptoms: {symptoms}, 
+        from the last {symptoms_duration} days. 
+        My age is {age} and my diet is {dietary_preferences}. 
+        I {tobacco_use} have smoking habits. I {alcohol_consumption} have drinking habits. 
+        My previous health problems include: {health_history}.
+        I've been taking the {medications} medicines regularly. 
+        Please suggest a doctor for me. Please provide one word answer.'''
+        
         # Replace the placeholders with the extracted information
         placeholder_string = placeholder_string.format(symptoms=symptoms, 
-                                                       days=days,
-                                                       diet_choice=diet_choice,
-                                                       medicine=medicine,
-                                                       choice=choice)
+                                                       symptoms_duration=symptoms_duration,
+                                                       age=age,
+                                                       dietary_preferences=dietary_preferences,
+                                                       tobacco_use=tobacco_use,
+                                                       alcohol_consumption=alcohol_consumption,
+                                                       health_history=health_history,
+                                                       medications=medications)
         return placeholder_string
-    
-    # sample code to call create_prompt and print result
-    description = {'symptoms': [
-        "Burning sensation during urination",
-        "Frequent urge to urinate",
-        "Cloudy or bloody urine",
-        "Lower abdominal pain"], 'diet_choice': 'Vegetarian', 'choice': 'false', 
-        'medicine': ["Ibuprofen", "Paracetamol"], 'days': '10'}
-    print(create_prompt(description))
