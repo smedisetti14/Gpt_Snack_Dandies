@@ -1,0 +1,9 @@
+{
+    "User": {
+      "123": {
+        "id": "123",
+        "name": "Ada Lovelace",
+        "email": "alove@gmail.com"
+      }
+    }
+  }
