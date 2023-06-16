@@ -1,6 +1,8 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import json
+import jsonpickle
 
 class DataHandler:
     def __init__(self, database_url, credential_path):
@@ -13,12 +15,17 @@ class DataHandler:
         ref = db.reference('User')
         user_data = ref.get()
 
-        if user_data is not None and user_schema["uuid"] in user_data:
+        #check if user_data contains user_schema, if not then create a new child to ref, otherwise update the existing element
+        uuid = user_schema.id
+        if user_data is None:
+            # create the collection and add user object to firebase
+            ref.child(uuid).set(user_schema.toJson())
+        elif uuid in user_data:
             # User exists, update the row with the new user schema data
-            ref.child(user_schema["uuid"]).update(user_schema)
+            ref.child(uuid).update(user_schema.toJson())
         else:
             # User does not exist, insert a new row with the user schema data
-            ref.child(user_schema["uuid"]).set(user_schema)
+            ref.child(uuid).set(user_schema.toJson())
 
     def insert_training_schema(self, training_schema):
         # Get a reference to the 'training' collection in the database
@@ -55,3 +62,16 @@ class DataHandler:
             "medications": answers.get("medications"),
             "health_history": answers.get("health_history")
         }
+    
+    def get_user_schema(self, uuid):
+        # Get a reference to the 'user' collection in the database
+        ref = db.reference('User')
+        user_data = ref.get()
+        if user_data is None:
+            return None
+        # check if user_data contains uuid
+        if uuid not in user_data:
+            return None
+        return user_data[uuid]
+    
+
