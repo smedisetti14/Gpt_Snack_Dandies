@@ -10,14 +10,14 @@ class DataHandler:
     def __init__(self):
         # Initialize the Firebase app with the provided credentials
         env = os.environ.get('ENVIRONMENT')
+        database_url = os.environ.get('DB_URL')
         if env == 'local':
-            database_url = os.environ.get('DB_URL')
             credential_path = os.environ.get('DB_CREDENTIAL_PATH')
             cred = credentials.Certificate(credential_path)
-            firebase_admin.initialize_app(cred, {'databaseURL': database_url})
         else:
             cred = credentials.ApplicationDefault()
-            firebase_admin.initialize_app(cred)
+
+        firebase_admin.initialize_app(cred, {'databaseURL': database_url})
 
     def insert_or_update_user_schema(self, user_schema):
         # Get a reference to the 'user' collection in the database
