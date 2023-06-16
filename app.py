@@ -3,7 +3,7 @@ from flask import Flask, request, redirect
 from flask_restful import Api, Resource
 from flasgger import Swagger
 from prompt_processor import PromptProcessor
-# from data_handler import DataHandler
+from data_handler import DataHandler
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,7 +12,7 @@ swagger = Swagger(app)
 api = Api(app)
 
 # Create an instance of the DataHandler class
-# data_handler = DataHandler('https://gptsnackdandies-default-rtdb.firebaseio.com/', 'gptsnackdandies-firebase-adminsdk-7ctws-a01d4f1f29.json')
+data_handler = DataHandler()
 
 class DoctorCategoryResource(Resource):
     def post(self):
@@ -97,7 +97,7 @@ class DoctorCategoryResource(Resource):
         prompt_data = PromptProcessor.create_prompt(answers)
 
         # Process the data and save it to Firebase
-        # data_handler.process_data_and_save(patient, answers)
+        data_handler.process_data_and_save(patient, answers)
 
         # Return the response from the OpenAI API
         ##TODO::invoke method to get user current location and top3 nearby doctors/healthcare details

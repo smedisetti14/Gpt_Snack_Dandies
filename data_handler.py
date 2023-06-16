@@ -1,12 +1,23 @@
+import os
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class DataHandler:
-    def __init__(self, database_url, credential_path):
+    def __init__(self):
         # Initialize the Firebase app with the provided credentials
-        cred = credentials.Certificate(credential_path)
-        firebase_admin.initialize_app(cred, {'databaseURL': database_url})
+        env = os.environ.get('ENVIRONMENT')
+        if env == 'local':
+            database_url = os.environ.get('DB_URL')
+            credential_path = os.environ.get('DB_CREDENTIAL_PATH')
+            cred = credentials.Certificate(credential_path)
+            firebase_admin.initialize_app(cred, {'databaseURL': database_url})
+        else:
+            cred = credentials.ApplicationDefault()
+            firebase_admin.initialize_app(cred)
 
     def insert_or_update_user_schema(self, user_schema):
         # Get a reference to the 'user' collection in the database
