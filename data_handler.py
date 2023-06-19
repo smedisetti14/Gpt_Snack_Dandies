@@ -26,10 +26,10 @@ class DataHandler:
         # Push the training schema data as a new child under 'training'
         ref.push(training_schema)
 
-    def process_data_and_save(self, patient, answers):
+    def process_data_and_save(self, patient, answers, expert_suggestion):
         # Convert the answers to user schema and training schema values
         user_schema_values = self.get_user_schema_values(patient, answers)
-        training_schema_values = self.get_training_schema_values(answers)
+        training_schema_values = self.get_training_schema_values(answers, expert_suggestion)
 
         # Insert or update the user schema in the database
         self.insert_or_update_user_schema(user_schema_values)
@@ -39,7 +39,7 @@ class DataHandler:
     def get_user_schema_values(self, patient, answers):
         # Extract the relevant user schema values from the answers
         return {
-            "uuid": patient.get("uuid"),
+            "uuid": patient.get("id"),
             "email": patient.get("email"),
             "age": answers.get("age"),
             "dietary_preferences": answers.get("dietary_preferences"),
@@ -47,11 +47,12 @@ class DataHandler:
             "tobacco_use": answers.get("tobacco_use")
         }
 
-    def get_training_schema_values(self, answers):
+    def get_training_schema_values(self, answers, expert_suggestion):
         # Extract the relevant training schema values from the answers
         return {
             "symptoms": answers.get("symptoms"),
             "symptoms_duration": answers.get("symptoms_duration"),
             "medications": answers.get("medications"),
-            "health_history": answers.get("health_history")
+            "health_history": answers.get("health_history"),
+            "expert": expert_suggestion
         }

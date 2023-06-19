@@ -21,8 +21,11 @@ try:
         top_p=1.0,
         frequency_penalty=0.0,
         presence_penalty=0.0)
-    print(response)
+    #print(response)
 except openai.error.AuthenticationError as e:
     print("OpenAI unknown authentication error")
     print(e.json_body)
     print(e.headers)
+
+
+

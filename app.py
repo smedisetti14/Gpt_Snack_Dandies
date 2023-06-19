@@ -1,9 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flasgger import Swagger
 import requests
+from ai_engine import OpenAiHelper
 from prompt_processor import PromptProcessor
 from data_handler import DataHandler
+from recommendation_engine import GooglePlaceHelper
+import json
 
 app = Flask(__name__)
 app.config['SERVER_NAME'] = 'localhost:5000'
@@ -11,7 +14,7 @@ swagger = Swagger(app)
 api = Api(app)
 
 # Create an instance of the DataHandler class
-data_handler = DataHandler('https://gptsnackdandies-default-rtdb.firebaseio.com/', 'gptsnackdandies-firebase-adminsdk-7ctws-a01d4f1f29.json')
+data_handler = DataHandler('https://symptomassessmentchatbot-default-rtdb.firebaseio.com/', 'symptomassessmentchatbot-firebase-adminsdk-vfk0y-82978d8fc5.json')
 
 class DoctorCategoryResource(Resource):
     def post(self):
@@ -92,17 +95,44 @@ class DoctorCategoryResource(Resource):
         location = patient['location']
         answers = conversation['answers']['answers']
 
-        # invoke method to get doctor type based on detailed description
         prompt_data = PromptProcessor.create_prompt(answers)
 
+        try:
+            expert_suggestion = OpenAiHelper.find_experts(prompt_data)
+            # extract doctor choice
+            expert_suggestion = expert_suggestion['choices'][0]['text']
+            initial_radius = 1500
+            query_count = 0
+
+            # call the find_expert method in the initial radius
+            # if status is ZERO_RESULTS, increase the radius by 1000 and try again
+            while True:
+                query_count += 1
+                expert_details = GooglePlaceHelper.find_expert(location['latitude'], location['longitude'], initial_radius, "doctor", expert_suggestion)
+                expert_string = expert_details.content.decode('utf-8')
+                expert_json = json.loads(expert_string)
+                if expert_json['status'] == 'ZERO_RESULTS':
+                    initial_radius += 1000
+                else:
+                    print("Queried google places ",query_count," times")
+                    break
+        except Exception as e:
+            print("Error while generating the expert suggestion",e)
+            return expert_suggestion, 500
+    
         # Process the data and save it to Firebase
-        data_handler.process_data_and_save(patient, answers)
-
-        # Return the response from the OpenAI API
-        ##TODO::invoke method to get user current location and top3 nearby doctors/healthcare details
-        ##TODO::return  recommeneded results to front end
-        return prompt_data, 200
-
+        #TODO: Extract other needed information for the firebase structures
+        try:
+            data_handler.process_data_and_save(patient, answers, expert_suggestion)
+        except Exception as e:
+            print("Error while saving the patient's details : ",e)
+            
+       
+        # creating a parsable json object, because the expert_details can't be directly returned
+        expert_string = expert_details.content.decode('utf-8')
+        expert_json = json.loads(expert_string)
+        print(expert_json)
+        return expert_json,200
 
 api.add_resource(DoctorCategoryResource, '/doctor-category')
 
