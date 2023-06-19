@@ -31,62 +31,63 @@ class DoctorCategoryResource(Resource):
             schema:
               type: object
               properties:
-                payload:
-                  type: object
-                  properties:
-                    conversation:
-                      type: object
-                      properties:
-                        answers:
-                          type: object
-                          properties:
-                            answers:
-                              type: object
-                              properties:
-                                symptoms:
-                                  type: string
-                                symptoms_duration:
-                                  type: string
-                                age:
-                                  type: string
-                                dietary_preferences:
-                                  type: string
-                                medications:
-                                  type: string
-                                health_history:
-                                  type: string
-                                alcohol_consumption:
-                                  type: boolean
-                                tobacco_use:
-                                  type: boolean
-                          required:
-                            - symptoms
-                            - symptoms_duration
-                            - age
-                            - dietary_preferences
-                            - medications
-                            - health_history
-                            - alcohol_consumption
-                            - tobacco_use
-                    patient:
-                      type: object
-                      properties:
-                        uuid:
-                          type: string
-                        email:
-                          type: string
-                        location:
-                          type: object
-                          properties:
-                            latitude:
-                              type: number
-                            longitude:
-                              type: number
-                  required:
-                    - conversation
-                    - patient
-                    - uuid
-                    - location
+                 payload: 
+                    type: object
+                    properties: 
+                      conversation: 
+                        type: object
+                        properties: 
+                          id: 
+                            type: string
+                            example: aec3251c-4dae-4eb5-bbde-23b69f903bdd
+                          answers: 
+                            type: object
+                            properties: 
+                              answers: 
+                                type: object
+                                properties: 
+                                  symptoms: 
+                                    type: string
+                                    example: pain in all joints weakness numbness in extremities
+                                  symptoms_duration: 
+                                    type: string
+                                    example: 2 years
+                                  age: 
+                                    type: string
+                                    example: 53
+                                  dietary_preferences: 
+                                    type: string
+                                    example: Non vegetarian
+                                  medications: 
+                                    type: string
+                                    example: Painkillers like Ibuprofen
+                                  health_history: 
+                                    type: string
+                                    example: Uric acid issues
+                                  alcohol_consumption: 
+                                    type: boolean
+                                    example: false
+                                  tobacco_use: 
+                                    type: boolean
+                                    example: false
+                      patient: 
+                        type: object
+                        properties: 
+                          id: 
+                            type: string
+                            example: 563ec5b0-c85d-4742-aa52-25a26448f4cc
+                          email: 
+                            type: string
+                            example: abc@gef.com
+                          location: 
+                            type: object
+                            properties: 
+                              latitude: 
+                                type: number
+                                example: -33.8670522
+                              longitude: 
+                                type: number
+                                example: 151.1957362
         responses:
             200:
                 description: OK
